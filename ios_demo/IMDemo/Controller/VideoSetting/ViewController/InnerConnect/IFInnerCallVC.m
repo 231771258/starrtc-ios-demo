@@ -8,10 +8,13 @@
 
 #import "IFInnerCallVC.h"
 
+
 @interface IFInnerCallVC () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *ipTextField;
 
 @end
+
+static NSString *ipAddr = @"192.168.1.104";
 
 @implementation IFInnerCallVC
 
@@ -32,10 +35,14 @@
     // Do any additional setup after loading the view from its nib.
     
     [self createIU];
+    
+    
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [[UIApplication sharedApplication].keyWindow endEditing:YES];
+    self.ipTextField.text = ipAddr;
+    
 }
 
 
@@ -43,7 +50,8 @@
 - (void)createIU {
     self.ipTextField.delegate = self;
     self.ipTextField.enablesReturnKeyAutomatically = YES;
-    self.ipTextField.returnKeyType = UIReturnKeyContinue;
+    self.ipTextField.returnKeyType = UIReturnKeyContinue;;
+    self.ipTextField.text = ipAddr;
 }
 
 
@@ -66,10 +74,16 @@
     
     [self dismissViewControllerAnimated:NO completion:nil];
     
+    ipAddr = self.ipTextField.text;
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"IFInnerStartCallNotif" object:@{@"ipStr":self.ipTextField.text}];
 
     return YES;
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    textField.text = ipAddr;
+}
 
 @end

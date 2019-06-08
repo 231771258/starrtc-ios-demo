@@ -19,7 +19,7 @@
 {
     self = [super init];
     if (self) {
-        [[XHClient sharedClient].voipManager addDelegate:self];
+        [[XHClient sharedClient].voipP2PManager addDelegate:self];
     }
     return self;
 }
@@ -59,11 +59,13 @@
 
 //对方已挂断
 - (void)onHangup:(NSString *)fromID{
+    NSLog(@"对方已挂断");
     [UIWindow ilg_makeToast:@"对方已挂断"];
     [self.videoVC backup];
 }
 //对方已取消呼叫  取消和挂断是一回事？？？？
 - (void)onCancled:(NSString *)fromID{
+    NSLog(@"对方已取消");
     [UIWindow ilg_makeToast:@"对方已取消"];
     [self.videoVC backup];
 }
@@ -91,5 +93,14 @@
 -(void)onStop:(NSString *)code{
     [self.videoVC backup];
 }
+
+- (void)onMiss:(NSString *)fromID {
+}
+
+
+- (void)onReceiveRealtimeData:(NSString *)data { 
+    
+}
+
 
 @end

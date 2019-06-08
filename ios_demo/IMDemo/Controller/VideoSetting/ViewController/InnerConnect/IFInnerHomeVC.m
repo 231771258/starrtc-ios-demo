@@ -28,6 +28,7 @@
 @property (nonatomic, strong) IFInnerManager *innerManager;
 @end
 
+
 @implementation IFInnerHomeVC
 
 - (BOOL)shouldAutorotate {
@@ -48,6 +49,8 @@
     self.innerManager = [[IFInnerManager alloc] init];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startCalling:) name:@"IFInnerStartCallNotif" object:nil];
+    
+    [[XHClient sharedClient].voipP2PManager initStarDirectLink ];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -61,18 +64,23 @@
 
 - (IBAction)callOther:(id)sender {
     IFInnerCallVC *vc = [[IFInnerCallVC alloc] initWithNibName:NSStringFromClass([IFInnerCallVC class]) bundle:[NSBundle mainBundle]];
+    NSLog(@"callOther 准备跳转输入对端地址画面");
     [self presentViewController:vc animated:YES completion:nil];
+    NSLog(@"callOther 已经跳转输入对端地址通话画面");
 }
 
 - (IBAction)backBtnClicked:(id)sender {
+    [[XHClient sharedClient].voipP2PManager stopStarDircetLink ];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)startCalling:(NSNotification *)notif {
+    NSLog(@"准备跳转到通话画面");
     NSDictionary *dict = notif.object;
-    
     [self presentViewController:self.innerManager.videoVC animated:YES completion:nil];
     [self.innerManager.videoVC configureTargetId:dict[@"ipStr"] status:IFInnerConversationStatus_Calling];
+    NSLog(@"跳转到通话画面结束");
+    
 }
 
 
@@ -85,7 +93,7 @@
     @[ /*IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4,*/ IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
     
     NSDictionary *addresses = [self getIPAddresses];
-    NSLog(@"addresses: %@", addresses);
+    //NSLog(@"addresses: %@", addresses);
     
     __block NSString *address;
     [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
